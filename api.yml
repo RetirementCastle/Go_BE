@@ -1,0 +1,342 @@
+#Test with: http://editor.swagger.io/
+#	a.Router.HandleFunc("/nursinghomes", a.getNursinghomes).Methods("GET")
+#	a.Router.HandleFunc("/nursinghomes", a.createNursinghome).Methods("POST")
+#	a.Router.HandleFunc("/nursinghome/{id:[0-9]+}", a.getNursinghome).Methods("GET")
+#	a.Router.HandleFunc("/nursinghome/{id:[0-9]+}", a.updateNursinghome).Methods("PUT")
+#	a.Router.HandleFunc("/nursinghome/{id:[0-9]+}", a.deleteNursinghome).Methods("DELETE")
+
+#	a.Router.HandleFunc("/nursinghome/{idnh:[0-9]+}/branches", a.getNHBranches).Methods("GET")
+#	a.Router.HandleFunc("/branches", a.getBranches).Methods("GET")
+#	a.Router.HandleFunc("/branches", a.createBranch).Methods("POST")
+#	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.updateBranch).Methods("PUT")
+#	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.deleteBranch).Methods("DELETE")
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Retirement castle [Nursinghomes]
+  description: Golang + MySQL
+  license:
+    name: Software Architecture 2018-II
+host: localhost:8087
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /nursinghomes:
+    post:
+      summary: Enters a new nursinghome
+      operationId: newNursighome
+      parameters:
+        - name: nursighome
+          in: body
+          required: true
+          description: Nursinghome Object
+          schema:
+            $ref: '#/definitions/NursinghomeInput'
+      responses:
+        '201':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Nursinghome'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all nursinghomes
+      operationId: getAllNursingHomes
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/NursinghomesList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /nursinghome/{id}:
+    get:
+      summary: Returns a Nursinghome with the given id
+      operationId: getNursinghomeById
+      parameters:
+        - name: id
+          in: path
+          description: The id of the Nursinghome to be returned
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Nursinghome'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    put:
+      summary: Updates a Nursinghome with the given id
+      operationId: updateNursinghome
+      parameters:
+        - name: id
+          in: path
+          description: The id of the Nursinghome to be updated
+          required: true
+          type: integer
+        - name: nursinghome
+          in: body
+          required: true
+          description: Nursinghome Object
+          schema:
+            $ref: '#/definitions/NursinghomeInput'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    delete:
+      summary: Deletes a Nursinghome with the given id
+      operationId: deleteNursinghome
+      parameters:
+        - name: id
+          in: path
+          description: The id of the Nursinghome to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  
+  /nursinghome/{id}/branches:
+    get:
+      summary: Returns the branches of a Nursinghome with the given id
+      operationId: getNursinghomeBranchesById
+      parameters:
+        - name: id
+          in: path
+          description: The id of the Nursinghome to returned its branches
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Nursinghome'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /branches:
+    post:
+      summary: Enters a new branch
+      operationId: newBranch
+      parameters:
+        - address: branch
+          in: body
+          required: true
+          description: Branch Object
+          schema:
+            $ref: '#/definitions/BranchInput'
+      responses:
+        '201':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Branch'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all branches
+      operationId: getAllBranches
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/BranchesList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /branches/{id}:
+    put:
+      summary: Updates a Branch with the given id
+      operationId: updateBranch
+      parameters:
+        - name: id
+          in: path
+          description: The id of the Branch to be updated
+          required: true
+          type: integer
+        - name: branch
+          in: body
+          required: true
+          description: Branch Object
+          schema:
+            $ref: '#/definitions/BranchInput'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    delete:
+      summary: Deletes a Branch with the given id
+      operationId: deleteBranch
+      parameters:
+        - name: id
+          in: path
+          description: The id of the Branch to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+
+  Nursinghome:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+  
+  Branch:
+    type: object
+    properties:
+      id:
+        type: integer
+      address:
+        type: string
+      total_rooms:
+        type: integer
+      available_rooms:
+        type: integer
+      nursinghome_idnursinghome:
+        type: integer
+      
+
+  NursinghomesList:
+    type: object
+    required:
+      - total
+    properties:
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Nursinghome'
+  
+  BranchesList:
+    type: object
+    required:
+      - total
+    properties:
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Branch'
+
+  NursinghomeInput:
+    type: object
+    properties:
+      name:
+        type: string
+  
+  BranchInput:
+    type: object
+    properties:
+      name:
+        type: string
+      
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - message
+    properties:
+      message:
+        type: string

@@ -38,14 +38,14 @@ func (a *App) Run(addr string) {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/nursinghomes", a.getNursinghomes).Methods("GET")
-	a.Router.HandleFunc("/nursinghome", a.createNursinghome).Methods("POST")
+	a.Router.HandleFunc("/nursinghomes", a.createNursinghome).Methods("POST")
 	a.Router.HandleFunc("/nursinghome/{id:[0-9]+}", a.getNursinghome).Methods("GET")
 	a.Router.HandleFunc("/nursinghome/{id:[0-9]+}", a.updateNursinghome).Methods("PUT")
 	a.Router.HandleFunc("/nursinghome/{id:[0-9]+}", a.deleteNursinghome).Methods("DELETE")
 
+	a.Router.HandleFunc("/nursinghome/{idnh:[0-9]+}/branches", a.getNHBranches).Methods("GET")
 	a.Router.HandleFunc("/branches", a.getBranches).Methods("GET")
 	a.Router.HandleFunc("/branches", a.createBranch).Methods("POST")
-	a.Router.HandleFunc("/nursinghome/{idnh:[0-9]+}/branches", a.getNHBranches).Methods("GET")
 	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.updateBranch).Methods("PUT")
 	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.deleteBranch).Methods("DELETE")
 }
