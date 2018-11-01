@@ -25,6 +25,10 @@ func (n *nursinghome) getNursinghome(db *sql.DB) error {
 	return db.QueryRow(statement).Scan(&n.Name)
 }
 
+func (b *branch) getBranch(db *sql.DB) error {
+	statement := fmt.Sprintf("SELECT * FROM branches WHERE idbranches=%d", b.ID)
+	return db.QueryRow(statement).Scan(&b.ID, &b.Address, &b.Totalrooms, &b.Availablerooms, &b.NHID)
+}
 func getBranches(db *sql.DB, start, count int) ([]branch, error) {
 	statement := fmt.Sprintf("SELECT idbranches, address, total_rooms, available_rooms, nursinghome_idnursinghome FROM branches LIMIT %d OFFSET %d", count, start)
 	//	statement := fmt.Sprintf("SELECT idbranches, addres, total_rooms, available_rooms, nursinghome_idnursinghome FROM branches")
@@ -49,7 +53,7 @@ func getBranches(db *sql.DB, start, count int) ([]branch, error) {
 }
 
 func getNHBranches(db *sql.DB, idnh int) ([]branch, error) {
-	statement := fmt.Sprintf("SELECT address, total_rooms, available_rooms FROM branches WHERE nursinghome_idnursinghome = %d;", idnh)
+	statement := fmt.Sprintf("SELECT * FROM branches WHERE nursinghome_idnursinghome = %d;", idnh)
 	rows, err := db.Query(statement)
 
 	if err != nil {
@@ -62,7 +66,7 @@ func getNHBranches(db *sql.DB, idnh int) ([]branch, error) {
 
 	for rows.Next() {
 		var b branch
-		if err := rows.Scan(&b.Address, &b.Totalrooms, &b.Availablerooms); err != nil {
+		if err := rows.Scan(&b.ID, &b.Address, &b.Totalrooms, &b.Availablerooms, &b.NHID); err != nil {
 			return nil, err
 		}
 		branches = append(branches, b)

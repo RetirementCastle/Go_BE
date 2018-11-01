@@ -1,0 +1,20 @@
+version: '2.1'
+services:
+  nursinghomes:
+    build: ./
+    container_name: go_be
+    depends_on:
+      - database
+    links:
+      - database
+    ports:
+      - "8087:8087"
+  database:
+    image: mysql:5.7.20
+    environment:
+      - MYSQL_ROOT_PASSWORD= 12345678
+      - MYSQL_DATABASE= NursingHomes
+    volumes:
+      - /data:/var/lib/mysql/NursingHomes
+    ports:
+      - 33060:3306

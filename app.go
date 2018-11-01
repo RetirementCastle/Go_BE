@@ -46,6 +46,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/nursinghome/{idnh:[0-9]+}/branches", a.getNHBranches).Methods("GET")
 	a.Router.HandleFunc("/branches", a.getBranches).Methods("GET")
 	a.Router.HandleFunc("/branches", a.createBranch).Methods("POST")
+	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.getBranch).Methods("GET")
 	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.updateBranch).Methods("PUT")
 	a.Router.HandleFunc("/branches/{idb:[0-9]+}", a.deleteBranch).Methods("DELETE")
 }
@@ -67,7 +68,7 @@ func (a *App) getNursinghomes(w http.ResponseWriter, r *http.Request) {
 	start, _ := strconv.Atoi(r.FormValue("start"))
 
 	if count > 10 || count < 1 {
-		count = 10
+		count = 100
 	}
 	if start < 0 {
 		start = 0
@@ -113,6 +114,29 @@ func (a *App) getNursinghome(w http.ResponseWriter, r *http.Request) {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Nursinghome not found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, n)
+}
+
+func (a *App) getBranch(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["idb"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid branch ID")
+		print(err)
+		return
+	}
+
+	n := branch{ID: id}
+	if err := n.getBranch(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Branch not found")
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -210,7 +234,7 @@ func (a *App) getBranches(w http.ResponseWriter, r *http.Request) {
 	start, _ := strconv.Atoi(r.FormValue("start"))
 
 	if count > 10 || count < 1 {
-		count = 10
+		count = 100
 	}
 	if start < 0 {
 		start = 0
