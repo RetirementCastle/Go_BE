@@ -10,11 +10,13 @@ services:
     ports:
       - "8087:8087"
   database:
-    image: mysql:5.7.20
+    image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD= 12345678
       - MYSQL_DATABASE= NursingHomes
     volumes:
-      - /data:/var/lib/mysql/NursingHomes
+      - dbvolume:/var/lib/mysql
     ports:
       - 33060:3306
+volumes:
+  dbvolume:
